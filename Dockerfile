@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PORT=5057
+    PORT=7860
 
 WORKDIR /app
 
@@ -17,6 +17,6 @@ COPY . .
 
 RUN mkdir -p uploads outputs
 
-EXPOSE 5057
+EXPOSE 7860
 
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5057} --workers 2 --timeout 600 app:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-7860} --workers 2 --timeout 600 app:app"]
