@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: translation-eval-web
+    env: docker
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 5057
+      - key: XCOMET_URL
+        sync: false
