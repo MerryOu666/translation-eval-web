@@ -13,9 +13,11 @@
     .hint { color: #666; font-size: 13px; line-height: 1.6; }
     button { margin-top: 24px; padding: 12px 20px; border: 0; border-radius: 10px; background: #1677ff; color: white; font-size: 16px; cursor: pointer; }
     button:hover { background: #0958d9; }
+    button:disabled { background: #aaa; cursor: not-allowed; }
     details { margin-top: 18px; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fafafa; }
     summary { font-weight: 700; cursor: pointer; }
     .warn { background: #fff7e6; border: 1px solid #ffd591; border-radius: 8px; padding: 10px; margin: 16px 0; }
+    #loading { display: none; margin-top: 18px; padding: 14px; background: #e6f4ff; border: 1px solid #91caff; border-radius: 8px; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -26,13 +28,13 @@
       <b>测试集格式说明：</b><br>
       1. 支持 <b>xlsx/xls/csv/txt</b>。Excel/CSV 必须包含列名 <b>测试用例</b>，也兼容 <b>query</b>。<br>
       2. TXT 文件每行一条测试用例，UTF-8 编码。<br>
-      3. Excel 中其他列（序号、类别、语种、语种代码等）会被保留在输入文件中，但本工具只读取“测试用例/query”列。<br>
+      3. Excel 中其他列（序号、类别、语种、语种代码等）会被保留在输入文件中，但本工具只读取"测试用例/query"列。<br>
       4. 单条测试用例可以包含换行、TAB、特殊空白、emoji、数字和符号；评分前会自动把单条内部换行/TAB 清洗为空格，避免 Xcomet 格式错位。<br>
-      5. 输出 TXT 格式为：<b>原文&lt;TAB&gt;译文</b>；输出 Excel 包含“评估”“综合得分统计”“错误日志”等 sheet。<br>
+      5. 输出 TXT 格式为：<b>原文&lt;TAB&gt;译文</b>；输出 Excel 包含"评估""综合得分统计""错误日志"等 sheet。<br>
       6. 若译文为空或译文与原文完全一致，会被视为明显未翻译，综合得分和 MQM 得分置 0。
     </div>
 
-    <form method="post" action="/run" enctype="multipart/form-data">
+    <form id="mainForm" method="post" action="/run" enctype="multipart/form-data">
       <label>测试集文件</label>
       <input type="file" name="testset" required>
 
@@ -108,8 +110,19 @@
         </div>
       </details>
 
-      <button type="submit">开始翻译并评估</button>
+      <button type="submit" id="submitBtn">开始翻译并评估</button>
+      <div id="loading">⏳ 翻译中，请稍等…数据量越大等待时间越长，请勿关闭页面。</div>
     </form>
   </div>
+
+  <script>
+    document.getElementById('mainForm').addEventListener('submit', function() {
+      var btn = document.getElementById('submitBtn');
+      var loading = document.getElementById('loading');
+      btn.disabled = true;
+      btn.textContent = '翻译中，请稍等…';
+      loading.style.display = 'block';
+    });
+  </script>
 </body>
 </html>
