@@ -268,10 +268,22 @@ def run_xcomet(originals: List[str], translations: List[str]) -> Tuple[List[floa
         for original, translation in zip(originals, translations):
             tmp.write(f"{sanitize_for_xcomet(original)}\t{sanitize_for_xcomet(translation)}\n")
     try:
-        result = subprocess.run(["python3", str(XCOMET_DEMO), "-i", str(tmp_path)], capture_output=True, text=True, timeout=300)
-        parsed = ast.literal_eval(result.stdout.strip())
-        scores = parsed.get("scores", [])
-        mqm_scores = parsed.get("mqm_scores", [])
+        result = subprocess.run(
+            ["python3", str(XCOMET_DEMO), "-i", str(tmp_path)],
+            capture_output=True, text=True, timeout=300
+        )
+        stdout = result.stdout.strip()
+        if stdout:
+            parsed = ast.literal_eval(stdout)
+            scores = parsed.get("scores", [])
+            mqm_scores = parsed.get("mqm_scores", [])
+        else:
+            # Xcomet 服务不可达或无输出，评分全部填 0
+            scores = [0.0] * len(originals)
+            mqm_scores = [0.0] * len(originals)
+    except Exception:
+        scores = [0.0] * len(originals)
+        mqm_scores = [0.0] * len(originals)
     finally:
         tmp_path.unlink(missing_ok=True)
     while len(scores) < len(originals):
