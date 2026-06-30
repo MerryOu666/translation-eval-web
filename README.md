@@ -13,8 +13,6 @@ app_port: 7860
 
 > 上传测试集 → 选择模型 → 调用翻译 API → Xcomet 自动评分 → 下载结果
 
-**在线体验：** [https://merryouooo-translation-eval-web.hf.space](https://merryouooo-translation-eval-web.hf.space)
-
 ---
 
 ## 功能介绍
@@ -126,21 +124,3 @@ python app.py
 ```
 http://127.0.0.1:7860
 ```
-
-## Docker 部署
-
-```bash
-docker build -t translation-eval-web .
-docker run -p 7860:7860 \
-  -e XCOMET_URL=http://your-xcomet-host/xcomet-xl/file \
-  translation-eval-web
-```
-
----
-
-## 注意事项
-
-- API 凭证只在当前页面请求时使用，不会被服务器存储
-- Xcomet 评分服务需要可访问的公网地址，否则评分结果为 0（翻译结果不受影响）
-- 大批量数据受各平台 QPS / RPM / 余额限制，可调大页面中的"请求间隔"
-- 各平台语种支持范围不同，如某语种调用失败，可在错误日志中查看详情
